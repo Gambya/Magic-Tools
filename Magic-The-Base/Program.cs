@@ -16,7 +16,7 @@ namespace Magic_The_Base
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new MagicTheBase());
         }
     }
 }
