@@ -1,41 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RepositorioUtilidades;
-using System.Net;
-using System.Text.RegularExpressions;
+using Magic_The_Base.Templates;
 
 namespace Magic_The_Base.Controllers
 {
     public class CardController
     {
-        private CookieContainer cookie;
+        MTGWizards cards;
 
-        public List<String> recoverCard()
+        public CardController()
         {
-            String strHTMLCollection = String.Empty;
-            MatchCollection matches;
-            List<String> listCollection = new List<string>();
+            this.cards = new MTGWizards();
+        }
 
-            strHTMLCollection = HttpWebRequestHelper.Get(new Uri("http://gatherer.wizards.com/Pages/Default.aspx"), ref cookie, Encoding.UTF8);
-            if (strHTMLCollection != null)
-            {
-                strHTMLCollection = Utilidade.removerQuebraDeLinha(strHTMLCollection);
-                strHTMLCollection = Regex.Match(strHTMLCollection, @"id=.ctl00_ctl00_MainContent_Content_SearchControls_setAddText.>(.+?)<\/select>").Value;
-                matches = Regex.Matches(strHTMLCollection, @"<option\s*value=.(?<Collection>.+?).>");
+        public List<String> recoverCollections()
+        {
+            return this.cards.recoverCollections();
+        }
 
-                foreach (Match item in matches)
-                {
-                    if (!Regex.IsMatch(item.Groups["Collection"].Value, @".><\/optio"))
-                    {
-                        listCollection.Add(item.Groups["Collection"].Value);
-                    }
-                }
-            }
+        public List<String> RecoverCardsLinks(String collection)
+        {
+            return this.cards.RecoverCardsLinks(collection);
+        }
 
-            return listCollection;
+        public void ExtrairCards(List<String> cards)
+        {
+            this.cards.ExtrairCards(cards);
         }
     }
 }
