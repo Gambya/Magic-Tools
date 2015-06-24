@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="MTGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="MTGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="CARD">
           <Key>
             <PropertyRef Name="CARDID" />
@@ -15,6 +15,7 @@
           <Property Name="MANACOST" Type="nchar" MaxLength="10" />
           <Property Name="CONVERTEDMANACOST" Type="int" Nullable="false" />
           <Property Name="TIPOID" Type="bigint" Nullable="false" />
+          <Property Name="SUBTIPOID" Type="bigint" Nullable="false" />
           <Property Name="CARDTEXT" Type="text" />
           <Property Name="FLAVORTEXT" Type="text" />
           <Property Name="ATAQUE" Type="int" />
@@ -46,7 +47,6 @@
           </Key>
           <Property Name="TIPOID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CARDTIPO" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="SUBTIPOID" Type="bigint" />
         </EntityType>
         <Association Name="FK_CARD_EXPANSION">
           <End Role="EXPANSION" Type="Self.EXPANSION" Multiplicity="1" />
@@ -60,6 +60,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_CARD_SUBTIPO">
+          <End Role="SUBTIPO" Type="Self.SUBTIPO" Multiplicity="1" />
+          <End Role="CARD" Type="Self.CARD" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SUBTIPO">
+              <PropertyRef Name="SUBTIPOID" />
+            </Principal>
+            <Dependent Role="CARD">
+              <PropertyRef Name="SUBTIPOID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CARD_TIPO">
           <End Role="TIPO" Type="Self.TIPO" Multiplicity="1" />
           <End Role="CARD" Type="Self.CARD" Multiplicity="*" />
@@ -69,18 +81,6 @@
             </Principal>
             <Dependent Role="CARD">
               <PropertyRef Name="TIPOID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TIPO_SUBTIPO">
-          <End Role="SUBTIPO" Type="Self.SUBTIPO" Multiplicity="0..1" />
-          <End Role="TIPO" Type="Self.TIPO" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SUBTIPO">
-              <PropertyRef Name="SUBTIPOID" />
-            </Principal>
-            <Dependent Role="TIPO">
-              <PropertyRef Name="SUBTIPOID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -93,30 +93,48 @@
             <End Role="EXPANSION" EntitySet="EXPANSION" />
             <End Role="CARD" EntitySet="CARD" />
           </AssociationSet>
+          <AssociationSet Name="FK_CARD_SUBTIPO" Association="Self.FK_CARD_SUBTIPO">
+            <End Role="SUBTIPO" EntitySet="SUBTIPO" />
+            <End Role="CARD" EntitySet="CARD" />
+          </AssociationSet>
           <AssociationSet Name="FK_CARD_TIPO" Association="Self.FK_CARD_TIPO">
             <End Role="TIPO" EntitySet="TIPO" />
             <End Role="CARD" EntitySet="CARD" />
           </AssociationSet>
-          <AssociationSet Name="FK_TIPO_SUBTIPO" Association="Self.FK_TIPO_SUBTIPO">
-            <End Role="SUBTIPO" EntitySet="SUBTIPO" />
-            <End Role="TIPO" EntitySet="TIPO" />
-          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MTGModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="MTGEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CARD" EntityType="MTGModel.CARD" />
+          <EntitySet Name="EXPANSION" EntityType="MTGModel.EXPANSION" />
+          <EntitySet Name="SUBTIPO" EntityType="MTGModel.SUBTIPO" />
+          <EntitySet Name="TIPO" EntityType="MTGModel.TIPO" />
+          <AssociationSet Name="FK_CARD_EXPANSION" Association="MTGModel.FK_CARD_EXPANSION">
+            <End Role="EXPANSION" EntitySet="EXPANSION" />
+            <End Role="CARD" EntitySet="CARD" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CARD_SUBTIPO" Association="MTGModel.FK_CARD_SUBTIPO">
+            <End Role="SUBTIPO" EntitySet="SUBTIPO" />
+            <End Role="CARD" EntitySet="CARD" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CARD_TIPO" Association="MTGModel.FK_CARD_TIPO">
+            <End Role="TIPO" EntitySet="TIPO" />
+            <End Role="CARD" EntitySet="CARD" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="CARD">
           <Key>
             <PropertyRef Name="CARDID" />
           </Key>
           <Property Name="CARDID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NOME" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="NOMEENG" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NOME" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NOMEENG" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="MANACOST" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="CONVERTEDMANACOST" Type="Int32" Nullable="false" />
           <Property Name="TIPOID" Type="Int64" Nullable="false" />
+          <Property Name="SUBTIPOID" Type="Int64" Nullable="false" />
           <Property Name="CARDTEXT" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="FLAVORTEXT" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ATAQUE" Type="Int32" />
@@ -126,39 +144,38 @@
           <Property Name="NUMEROCARD" Type="Int32" />
           <Property Name="ARTISTA" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="REGRAS" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="EXPANSION" Relationship="Self.FK_CARD_EXPANSION" FromRole="CARD" ToRole="EXPANSION" />
-          <NavigationProperty Name="TIPO" Relationship="Self.FK_CARD_TIPO" FromRole="CARD" ToRole="TIPO" />
+          <NavigationProperty Name="EXPANSION" Relationship="MTGModel.FK_CARD_EXPANSION" FromRole="CARD" ToRole="EXPANSION" />
+          <NavigationProperty Name="SUBTIPO" Relationship="MTGModel.FK_CARD_SUBTIPO" FromRole="CARD" ToRole="SUBTIPO" />
+          <NavigationProperty Name="TIPO" Relationship="MTGModel.FK_CARD_TIPO" FromRole="CARD" ToRole="TIPO" />
         </EntityType>
         <EntityType Name="EXPANSION">
           <Key>
             <PropertyRef Name="EXPANSIONID" />
           </Key>
           <Property Name="EXPANSIONID" Type="Int64" Nullable="false" />
-          <Property Name="EXPANSION1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EXPANSION1" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="SIGLA" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="CARD" Relationship="Self.FK_CARD_EXPANSION" FromRole="EXPANSION" ToRole="CARD" />
+          <NavigationProperty Name="CARD" Relationship="MTGModel.FK_CARD_EXPANSION" FromRole="EXPANSION" ToRole="CARD" />
         </EntityType>
         <EntityType Name="SUBTIPO">
           <Key>
             <PropertyRef Name="SUBTIPOID" />
           </Key>
           <Property Name="SUBTIPOID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SUBTIPO1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="TIPO" Relationship="Self.FK_TIPO_SUBTIPO" FromRole="SUBTIPO" ToRole="TIPO" />
+          <Property Name="SUBTIPO1" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CARD" Relationship="MTGModel.FK_CARD_SUBTIPO" FromRole="SUBTIPO" ToRole="CARD" />
         </EntityType>
         <EntityType Name="TIPO">
           <Key>
             <PropertyRef Name="TIPOID" />
           </Key>
           <Property Name="TIPOID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CARDTIPO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="SUBTIPOID" Type="Int64" />
-          <NavigationProperty Name="CARD" Relationship="Self.FK_CARD_TIPO" FromRole="TIPO" ToRole="CARD" />
-          <NavigationProperty Name="SUBTIPO" Relationship="Self.FK_TIPO_SUBTIPO" FromRole="TIPO" ToRole="SUBTIPO" />
+          <Property Name="CARDTIPO" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="CARD" Relationship="MTGModel.FK_CARD_TIPO" FromRole="TIPO" ToRole="CARD" />
         </EntityType>
         <Association Name="FK_CARD_EXPANSION">
-          <End Role="EXPANSION" Type="Self.EXPANSION" Multiplicity="1" />
-          <End Role="CARD" Type="Self.CARD" Multiplicity="*" />
+          <End Type="MTGModel.EXPANSION" Role="EXPANSION" Multiplicity="1" />
+          <End Type="MTGModel.CARD" Role="CARD" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="EXPANSION">
               <PropertyRef Name="EXPANSIONID" />
@@ -168,9 +185,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_CARD_SUBTIPO">
+          <End Type="MTGModel.SUBTIPO" Role="SUBTIPO" Multiplicity="1" />
+          <End Type="MTGModel.CARD" Role="CARD" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SUBTIPO">
+              <PropertyRef Name="SUBTIPOID" />
+            </Principal>
+            <Dependent Role="CARD">
+              <PropertyRef Name="SUBTIPOID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CARD_TIPO">
-          <End Role="TIPO" Type="Self.TIPO" Multiplicity="1" />
-          <End Role="CARD" Type="Self.CARD" Multiplicity="*" />
+          <End Type="MTGModel.TIPO" Role="TIPO" Multiplicity="1" />
+          <End Type="MTGModel.CARD" Role="CARD" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="TIPO">
               <PropertyRef Name="TIPOID" />
@@ -180,36 +209,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TIPO_SUBTIPO">
-          <End Role="SUBTIPO" Type="Self.SUBTIPO" Multiplicity="0..1" />
-          <End Role="TIPO" Type="Self.TIPO" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SUBTIPO">
-              <PropertyRef Name="SUBTIPOID" />
-            </Principal>
-            <Dependent Role="TIPO">
-              <PropertyRef Name="SUBTIPOID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="MTGEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="CARD" EntityType="Self.CARD" />
-          <EntitySet Name="EXPANSION" EntityType="Self.EXPANSION" />
-          <EntitySet Name="SUBTIPO" EntityType="Self.SUBTIPO" />
-          <EntitySet Name="TIPO" EntityType="Self.TIPO" />
-          <AssociationSet Name="FK_CARD_EXPANSION" Association="Self.FK_CARD_EXPANSION">
-            <End Role="EXPANSION" EntitySet="EXPANSION" />
-            <End Role="CARD" EntitySet="CARD" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CARD_TIPO" Association="Self.FK_CARD_TIPO">
-            <End Role="TIPO" EntitySet="TIPO" />
-            <End Role="CARD" EntitySet="CARD" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TIPO_SUBTIPO" Association="Self.FK_TIPO_SUBTIPO">
-            <End Role="SUBTIPO" EntitySet="SUBTIPO" />
-            <End Role="TIPO" EntitySet="TIPO" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -219,47 +218,47 @@
           <EntitySetMapping Name="CARD">
             <EntityTypeMapping TypeName="MTGModel.CARD">
               <MappingFragment StoreEntitySet="CARD">
-                <ScalarProperty Name="CARDID" ColumnName="CARDID" />
-                <ScalarProperty Name="NOME" ColumnName="NOME" />
-                <ScalarProperty Name="NOMEENG" ColumnName="NOMEENG" />
-                <ScalarProperty Name="MANACOST" ColumnName="MANACOST" />
-                <ScalarProperty Name="CONVERTEDMANACOST" ColumnName="CONVERTEDMANACOST" />
-                <ScalarProperty Name="TIPOID" ColumnName="TIPOID" />
-                <ScalarProperty Name="CARDTEXT" ColumnName="CARDTEXT" />
-                <ScalarProperty Name="FLAVORTEXT" ColumnName="FLAVORTEXT" />
-                <ScalarProperty Name="ATAQUE" ColumnName="ATAQUE" />
-                <ScalarProperty Name="DEFESA" ColumnName="DEFESA" />
-                <ScalarProperty Name="EXPANSIONID" ColumnName="EXPANSIONID" />
-                <ScalarProperty Name="RARIDADE" ColumnName="RARIDADE" />
-                <ScalarProperty Name="NUMEROCARD" ColumnName="NUMEROCARD" />
-                <ScalarProperty Name="ARTISTA" ColumnName="ARTISTA" />
                 <ScalarProperty Name="REGRAS" ColumnName="REGRAS" />
+                <ScalarProperty Name="ARTISTA" ColumnName="ARTISTA" />
+                <ScalarProperty Name="NUMEROCARD" ColumnName="NUMEROCARD" />
+                <ScalarProperty Name="RARIDADE" ColumnName="RARIDADE" />
+                <ScalarProperty Name="EXPANSIONID" ColumnName="EXPANSIONID" />
+                <ScalarProperty Name="DEFESA" ColumnName="DEFESA" />
+                <ScalarProperty Name="ATAQUE" ColumnName="ATAQUE" />
+                <ScalarProperty Name="FLAVORTEXT" ColumnName="FLAVORTEXT" />
+                <ScalarProperty Name="CARDTEXT" ColumnName="CARDTEXT" />
+                <ScalarProperty Name="SUBTIPOID" ColumnName="SUBTIPOID" />
+                <ScalarProperty Name="TIPOID" ColumnName="TIPOID" />
+                <ScalarProperty Name="CONVERTEDMANACOST" ColumnName="CONVERTEDMANACOST" />
+                <ScalarProperty Name="MANACOST" ColumnName="MANACOST" />
+                <ScalarProperty Name="NOMEENG" ColumnName="NOMEENG" />
+                <ScalarProperty Name="NOME" ColumnName="NOME" />
+                <ScalarProperty Name="CARDID" ColumnName="CARDID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EXPANSION">
             <EntityTypeMapping TypeName="MTGModel.EXPANSION">
               <MappingFragment StoreEntitySet="EXPANSION">
-                <ScalarProperty Name="EXPANSIONID" ColumnName="EXPANSIONID" />
-                <ScalarProperty Name="EXPANSION1" ColumnName="EXPANSION" />
                 <ScalarProperty Name="SIGLA" ColumnName="SIGLA" />
+                <ScalarProperty Name="EXPANSION1" ColumnName="EXPANSION" />
+                <ScalarProperty Name="EXPANSIONID" ColumnName="EXPANSIONID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SUBTIPO">
             <EntityTypeMapping TypeName="MTGModel.SUBTIPO">
               <MappingFragment StoreEntitySet="SUBTIPO">
-                <ScalarProperty Name="SUBTIPOID" ColumnName="SUBTIPOID" />
                 <ScalarProperty Name="SUBTIPO1" ColumnName="SUBTIPO" />
+                <ScalarProperty Name="SUBTIPOID" ColumnName="SUBTIPOID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="TIPO">
             <EntityTypeMapping TypeName="MTGModel.TIPO">
               <MappingFragment StoreEntitySet="TIPO">
-                <ScalarProperty Name="TIPOID" ColumnName="TIPOID" />
                 <ScalarProperty Name="CARDTIPO" ColumnName="CARDTIPO" />
-                <ScalarProperty Name="SUBTIPOID" ColumnName="SUBTIPOID" />
+                <ScalarProperty Name="TIPOID" ColumnName="TIPOID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

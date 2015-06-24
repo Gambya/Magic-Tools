@@ -22,10 +22,8 @@ namespace RepositorioMagic
     
         public long TIPOID { get; set; }
         public string CARDTIPO { get; set; }
-        public Nullable<long> SUBTIPOID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CARD> CARD { get; set; }
-        public virtual SUBTIPO SUBTIPO { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace RepositorioMagic
         public string MANACOST { get; set; }
         public int CONVERTEDMANACOST { get; set; }
         public long TIPOID { get; set; }
+        public long SUBTIPOID { get; set; }
         public string CARDTEXT { get; set; }
         public string FLAVORTEXT { get; set; }
         public Nullable<int> ATAQUE { get; set; }
@@ -31,6 +32,7 @@ namespace RepositorioMagic
         public string REGRAS { get; set; }
     
         public virtual EXPANSION EXPANSION { get; set; }
+        public virtual SUBTIPO SUBTIPO { get; set; }
         public virtual TIPO TIPO { get; set; }
     }
 }

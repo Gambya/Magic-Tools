@@ -17,13 +17,13 @@ namespace RepositorioMagic
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SUBTIPO()
         {
-            this.TIPO = new HashSet<TIPO>();
+            this.CARD = new HashSet<CARD>();
         }
     
         public long SUBTIPOID { get; set; }
         public string SUBTIPO1 { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TIPO> TIPO { get; set; }
+        public virtual ICollection<CARD> CARD { get; set; }
     }
 }

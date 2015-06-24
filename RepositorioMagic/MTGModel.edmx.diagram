@@ -5,13 +5,13 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="aa5e8a95838b47c1bbdc70fca52930bd" Name="Diagram1">
-        <EntityTypeShape EntityType="MTGModel.CARD" Width="1.5" PointX="5.25" PointY="2.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="MTGModel.EXPANSION" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MTGModel.SUBTIPO" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="MTGModel.TIPO" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
-        <AssociationConnector Association="MTGModel.FK_CARD_EXPANSION" ManuallyRouted="false" />
-        <AssociationConnector Association="MTGModel.FK_CARD_TIPO" ManuallyRouted="false" />
-        <AssociationConnector Association="MTGModel.FK_TIPO_SUBTIPO" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MTGModel.CARD" Width="1.5" PointX="3" PointY="2.375" />
+        <EntityTypeShape EntityType="MTGModel.EXPANSION" Width="1.5" PointX="0.75" PointY="3.875" />
+        <EntityTypeShape EntityType="MTGModel.SUBTIPO" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="MTGModel.TIPO" Width="1.5" PointX="0.75" PointY="7.125" />
+        <AssociationConnector Association="MTGModel.FK_CARD_EXPANSION" />
+        <AssociationConnector Association="MTGModel.FK_CARD_SUBTIPO" />
+        <AssociationConnector Association="MTGModel.FK_CARD_TIPO" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
